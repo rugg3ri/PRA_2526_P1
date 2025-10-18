@@ -15,10 +15,12 @@ class ListArray : public List<T> {
 			if(new_size < MINSIZE){
 				new_size = MINSIZE;
 			}
-			T* new_arr = new T[new_size];
-			for(int i=0; i<new_size; i++){
-				new_arr[i]= nullptr;
+			if(new_size < n){
+				n = new_size;
 			}
+
+			T* new_arr = new T[new_size];
+			
 			for(int i=0; i<n; i++){
 				new_arr[i] = arr[i];
 			}
@@ -35,7 +37,7 @@ class ListArray : public List<T> {
 			if(n == max){
 				resize(max+1);
 			}
-			if(arr[pos] != nullptr){
+			if(pos<n){
 				for(int i=max-1; i>pos; i--){
 					arr[i] = arr[i-1];
 				}
@@ -60,17 +62,13 @@ class ListArray : public List<T> {
 			if(n==max){
 				resize(max+1);
 			}
-			if(arr[0] == nullptr){
-				arr[0] = e;
-				n++;
-			}
-			else{
-				for(int i=max-1; i>0; i--){
+			if(n>0){
+				for(int i=n; i>0;i--){
 					arr[i] = arr[i-1];
 				}
-				arr[0] = e;
-				n++;
 			}
+			arr[0] = e;
+			n++;
 		}
 
 		T remove(int pos){
@@ -78,7 +76,10 @@ class ListArray : public List<T> {
 				throw out_of_range("Posicion fuera de rango");
 			}
 			T aux = arr[pos];
-			arr[pos] = nullptr;
+			for(int i=pos; i<n; i++){
+				arr[i] = arr[i+1];
+			}
+			n--;
 			return aux;
 		}
 
@@ -132,9 +133,9 @@ class ListArray : public List<T> {
 		
 		friend ostream&operator<<(ostream &out, const ListArray<T> &list){
 			out << "[";
-			for(int i = 0; i<list.size(); i++){
-				out << list[i];
-				if(i<list.size() -1){
+			for(int i = 0; i<list.n; i++){
+				out << list.arr[i];
+				if(i<list.n -1){
 					out << ", ";
 				}
 			}
